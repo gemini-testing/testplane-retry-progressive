@@ -15,6 +15,10 @@ module.exports = (hermione, opts) => {
 
     const retryManager = new RetryManager(config);
 
+    hermione.on(hermione.events.RUNNER_START, () => {
+        retryManager.clear();
+    });
+
     hermione.config.getBrowserIds().forEach((browserId) => {
         const browserConfig = hermione.config.forBrowser(browserId);
 
