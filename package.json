@@ -1,6 +1,6 @@
 {
   "name": "hermione-retry-progressive",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Hermione plugin for adding extra retries at tests with errors matched by patterns.",
   "main": "index.js",
   "scripts": {
