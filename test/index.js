@@ -1,23 +1,32 @@
 'use strict';
 
+const EventEmitter = require('events').EventEmitter;
+
 const RetryManager = require('../lib/retry-manager');
 const plugin = require('../index');
 const logger = require('../lib/logger');
 
 const defaultBrowserName = 'def-bro';
 
+const events = {
+    RUNNER_START: 'fooBarRunnerStart'
+};
+
 const mkDefaultBrowsersConfig = () => ({
     [defaultBrowserName]: {}
 });
 
 const stubHermione = (browsers = mkDefaultBrowsersConfig()) => {
-    return {
-        config: {
-            getBrowserIds: () => Object.keys(browsers),
-            forBrowser: id => browsers[id]
-        },
-        isWorker: () => false
+    const hermione = new EventEmitter();
+
+    hermione.events = events;
+    hermione.config = {
+        getBrowserIds: () => Object.keys(browsers),
+        forBrowser: id => browsers[id]
     };
+    hermione.isWorker = () => false;
+
+    return hermione;
 };
 
 const init_ = () => {
@@ -43,6 +52,7 @@ describe('index', () => {
     beforeEach(() => {
         sandbox.stub(logger, 'info');
         sandbox.stub(RetryManager.prototype, 'updateExtraRetry').returns(0);
+        sandbox.stub(RetryManager.prototype, 'clear');
     });
 
     afterEach(() => sandbox.restore());
@@ -151,5 +161,13 @@ describe('index', () => {
 
         assert.equal(shouldRetry, false);
         assert.calledWith(shouldRetryStub, {ctx: sinon.match.object, retriesLeft: 0});
+    });
+
+    it('should clear retryManager on RUNNER_START event', () => {
+        const hermione = init_();
+
+        hermione.emit(hermione.events.RUNNER_START);
+
+        assert.calledOnce(RetryManager.prototype.clear);
     });
 });
