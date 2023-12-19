@@ -74,12 +74,30 @@ describe('index', () => {
         assert.isUndefined(hermione.config.forBrowser(defaultBrowserName).shouldRetry);
     });
 
-    it('should call updateExtraRetry', () => {
-        const hermione = init_();
+    describe('should call "updateExtraRetry"', () => {
+        it('with test id and error message', () => {
+            const hermione = init_();
+            const ctx = {
+                fullTitle: () => 'test',
+                err: {message: 'o.O'}
+            };
 
-        hermione.config.forBrowser(defaultBrowserName).shouldRetry({ctx: mtTest(), retriesLeft: 0});
+            hermione.config.forBrowser(defaultBrowserName).shouldRetry({ctx, retriesLeft: 0});
 
-        assert.calledWith(RetryManager.prototype.updateExtraRetry, 'test name stub (def-bro)', 'error message stub');
+            assert.calledWith(RetryManager.prototype.updateExtraRetry, 'test (def-bro)', 'o.O');
+        });
+
+        it('with test id and empty error message', () => {
+            const hermione = init_();
+            const ctx = {
+                fullTitle: () => 'test',
+                err: undefined
+            };
+
+            hermione.config.forBrowser(defaultBrowserName).shouldRetry({ctx, retriesLeft: 0});
+
+            assert.calledWith(RetryManager.prototype.updateExtraRetry, 'test (def-bro)', '');
+        });
     });
 
     it('should not retry if sum retries === 0', () => {

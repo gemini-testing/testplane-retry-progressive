@@ -1,5 +1,6 @@
 'use strict';
 
+const _ = require('lodash');
 const parseConfig = require('./lib/parse-config');
 const RetryManager = require('./lib/retry-manager');
 
@@ -34,7 +35,8 @@ module.exports = (hermione, opts) => {
             const {ctx, retriesLeft} = options;
             const testId = `${ctx.fullTitle()} (${browserId})`;
 
-            const extraRetry = retryManager.updateExtraRetry(testId, ctx.err.message);
+            const errorMessage = _.get(ctx, 'err.message', '');
+            const extraRetry = retryManager.updateExtraRetry(testId, errorMessage);
 
             return retriesLeft + extraRetry > 0;
         };
