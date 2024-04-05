@@ -16,25 +16,25 @@ const mkDefaultBrowsersConfig = () => ({
     [defaultBrowserName]: {}
 });
 
-const stubHermione = (browsers = mkDefaultBrowsersConfig()) => {
-    const hermione = new EventEmitter();
+const stubtestplane = (browsers = mkDefaultBrowsersConfig()) => {
+    const testplane = new EventEmitter();
 
-    hermione.events = events;
-    hermione.config = {
+    testplane.events = events;
+    testplane.config = {
         getBrowserIds: () => Object.keys(browsers),
         forBrowser: id => browsers[id]
     };
-    hermione.isWorker = () => false;
+    testplane.isWorker = () => false;
 
-    return hermione;
+    return testplane;
 };
 
 const init_ = () => {
-    const hermione = stubHermione();
+    const testplane = stubtestplane();
 
-    plugin(hermione, {enabled: true});
+    plugin(testplane, {enabled: true});
 
-    return hermione;
+    return testplane;
 };
 
 const mtTest = () => {
@@ -58,54 +58,54 @@ describe('index', () => {
     afterEach(() => sandbox.restore());
 
     it('should do nothing in worker', () => {
-        const hermione = stubHermione();
-        hermione.isWorker = () => true;
+        const testplane = stubtestplane();
+        testplane.isWorker = () => true;
 
-        plugin(hermione);
+        plugin(testplane);
 
-        assert.isUndefined(hermione.config.forBrowser(defaultBrowserName).shouldRetry);
+        assert.isUndefined(testplane.config.forBrowser(defaultBrowserName).shouldRetry);
     });
 
     it('should do nothing if plugin is disabled', () => {
-        const hermione = stubHermione();
+        const testplane = stubtestplane();
 
-        plugin(hermione, {enabled: false});
+        plugin(testplane, {enabled: false});
 
-        assert.isUndefined(hermione.config.forBrowser(defaultBrowserName).shouldRetry);
+        assert.isUndefined(testplane.config.forBrowser(defaultBrowserName).shouldRetry);
     });
 
     describe('should call "updateExtraRetry"', () => {
         it('with test id and error message', () => {
-            const hermione = init_();
+            const testplane = init_();
             const ctx = {
                 fullTitle: () => 'test',
                 err: {message: 'o.O'}
             };
 
-            hermione.config.forBrowser(defaultBrowserName).shouldRetry({ctx, retriesLeft: 0});
+            testplane.config.forBrowser(defaultBrowserName).shouldRetry({ctx, retriesLeft: 0});
 
             assert.calledWith(RetryManager.prototype.updateExtraRetry, 'test (def-bro)', 'o.O');
         });
 
         it('with test id and empty error message', () => {
-            const hermione = init_();
+            const testplane = init_();
             const ctx = {
                 fullTitle: () => 'test',
                 err: undefined
             };
 
-            hermione.config.forBrowser(defaultBrowserName).shouldRetry({ctx, retriesLeft: 0});
+            testplane.config.forBrowser(defaultBrowserName).shouldRetry({ctx, retriesLeft: 0});
 
             assert.calledWith(RetryManager.prototype.updateExtraRetry, 'test (def-bro)', '');
         });
     });
 
     it('should not retry if sum retries === 0', () => {
-        const hermione = init_();
+        const testplane = init_();
 
         RetryManager.prototype.updateExtraRetry.returns(1);
 
-        const shouldRetry = hermione.config
+        const shouldRetry = testplane.config
             .forBrowser(defaultBrowserName)
             .shouldRetry({ctx: mtTest(), retriesLeft: -1});
 
@@ -113,11 +113,11 @@ describe('index', () => {
     });
 
     it('should not retry if sum retries < 0', () => {
-        const hermione = init_();
+        const testplane = init_();
 
         RetryManager.prototype.updateExtraRetry.returns(0);
 
-        const shouldRetry = hermione.config
+        const shouldRetry = testplane.config
             .forBrowser(defaultBrowserName)
             .shouldRetry({ctx: mtTest(), retriesLeft: -1});
 
@@ -125,11 +125,11 @@ describe('index', () => {
     });
 
     it('should retry if sum retries > 0', () => {
-        const hermione = init_();
+        const testplane = init_();
 
         RetryManager.prototype.updateExtraRetry.returns(2);
 
-        const shouldRetry = hermione.config
+        const shouldRetry = testplane.config
             .forBrowser(defaultBrowserName)
             .shouldRetry({ctx: mtTest(), retriesLeft: -1});
 
@@ -138,12 +138,12 @@ describe('index', () => {
 
     it('should retry if "shouldRetry" handler from config return true', () => {
         const shouldRetryStub = sandbox.stub().returns(true);
-        const hermione = stubHermione({
+        const testplane = stubtestplane({
             [defaultBrowserName]: {shouldRetry: shouldRetryStub}
         });
-        plugin(hermione, {enabled: true});
+        plugin(testplane, {enabled: true});
 
-        const shouldRetry = hermione.config
+        const shouldRetry = testplane.config
             .forBrowser(defaultBrowserName)
             .shouldRetry({ctx: mtTest(), retriesLeft: 0});
 
@@ -153,12 +153,12 @@ describe('index', () => {
 
     it('should retry if "shouldRetry" handler from config return false and sum retries > 0', () => {
         const shouldRetryStub = sandbox.stub().returns(false);
-        const hermione = stubHermione({
+        const testplane = stubtestplane({
             [defaultBrowserName]: {shouldRetry: shouldRetryStub}
         });
-        plugin(hermione, {enabled: true});
+        plugin(testplane, {enabled: true});
 
-        const shouldRetry = hermione.config
+        const shouldRetry = testplane.config
             .forBrowser(defaultBrowserName)
             .shouldRetry({ctx: mtTest(), retriesLeft: 1});
 
@@ -168,12 +168,12 @@ describe('index', () => {
 
     it('should not retry if "shouldRetry" handler from config return false and sum retries === 0', () => {
         const shouldRetryStub = sandbox.stub().returns(false);
-        const hermione = stubHermione({
+        const testplane = stubtestplane({
             [defaultBrowserName]: {shouldRetry: shouldRetryStub}
         });
-        plugin(hermione, {enabled: true});
+        plugin(testplane, {enabled: true});
 
-        const shouldRetry = hermione.config
+        const shouldRetry = testplane.config
             .forBrowser(defaultBrowserName)
             .shouldRetry({ctx: mtTest(), retriesLeft: 0});
 
@@ -182,9 +182,9 @@ describe('index', () => {
     });
 
     it('should clear retryManager on RUNNER_START event', () => {
-        const hermione = init_();
+        const testplane = init_();
 
-        hermione.emit(hermione.events.RUNNER_START);
+        testplane.emit(testplane.events.RUNNER_START);
 
         assert.calledOnce(RetryManager.prototype.clear);
     });
