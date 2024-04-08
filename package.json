@@ -1,6 +1,6 @@
 {
   "name": "@testplane/retry-progressive",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Testplane plugin for adding extra retries at tests with errors matched by patterns.",
   "main": "index.js",
   "scripts": {
