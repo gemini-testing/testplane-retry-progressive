@@ -1,7 +1,7 @@
 {
-  "name": "hermione-retry-progressive",
-  "version": "0.0.4",
-  "description": "Hermione plugin for adding extra retries at tests with errors matched by patterns.",
+  "name": "@testplane/retry-progressive",
+  "version": "0.0.1",
+  "description": "Testplane plugin for adding extra retries at tests with errors matched by patterns.",
   "main": "index.js",
   "scripts": {
     "coverage": "nyc npm run test",
@@ -12,9 +12,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/gemini-testing/hermione-retry-progressive.git"
+    "url": "git+ssh://git@github.com/gemini-testing/testplane-retry-progressive.git"
   },
   "keywords": [
+    "testplane",
     "hermione",
     "plugin",
     "retry",
@@ -22,9 +23,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gemini-testing/hermione-retry-progressive/issues"
+    "url": "https://github.com/gemini-testing/testplane-retry-progressive/issues"
   },
-  "homepage": "https://github.com/gemini-testing/hermione-retry-progressive#readme",
+  "homepage": "https://github.com/gemini-testing/testplane-retry-progressive#readme",
   "dependencies": {
     "gemini-configparser": "1.0.0",
     "lodash": "4.17.11"

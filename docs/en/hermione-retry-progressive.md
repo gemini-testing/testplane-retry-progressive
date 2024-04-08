@@ -1,8 +1,8 @@
-# hermione-retry-progressive
+# @testplane/retry-progressive
 
 ## Overview
 
-Use the `hermione-retry-progressive` plugin to additionally retry tests if the errors with which they fail correspond to a given set of patterns.
+Use the `@testplane/retry-progressive` plugin to additionally retry tests if the errors with which they fail correspond to a given set of patterns.
 
 What might it be needed for?
 
@@ -28,17 +28,17 @@ Tests can fail not only because of developer errors, races between scripts execu
 ## Install
 
 ```bash
-npm install -D hermione-retry-progressive
+npm install -D @testplane/retry-progressive
 ```
 
 ## Setup
 
-Add the plugin to the `plugins` section of the `hermione` config:
+Add the plugin to the `plugins` section of the `testplane` config:
 
 ```javascript
 module.exports = {
     plugins: {
-        'hermione-retry-progressive': {
+        '@testplane/retry-progressive': {
             enabled: true,
             extraRetry: 7,
             errorPatterns: [
@@ -50,10 +50,10 @@ module.exports = {
             ],
         },
 
-        // other hermione plugins...
+        // other testplane plugins...
     },
 
-    // other hermione settings...
+    // other testplane settings...
 };
 ```
 
@@ -89,12 +89,12 @@ The latter option is convenient if the readable format for the console and the e
 
 ### Passing parameters via the CLI
 
-All plugin parameters that can be defined in the config can also be passed as command-line options or through environment variables during the launch of Hermione. Use the prefix `--retry-progressive-` for command line options and `hermione_retry_progressive_` for environment variables. For example:
+All plugin parameters that can be defined in the config can also be passed as command-line options or through environment variables during the launch of testplane. Use the prefix `--retry-progressive-` for command line options and `testplane_retry_progressive_` for environment variables. For example:
 
 ```bash
-npx hermione --retry-progressive-extra-retry 3
+npx testplane --retry-progressive-extra-retry 3
 ```
 
 ```bash
-hermione_retry_progressive_extra_retry=3 npx hermione
+testplane_retry_progressive_extra_retry=3 npx testplane
 ```

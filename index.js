@@ -4,8 +4,8 @@ const _ = require('lodash');
 const parseConfig = require('./lib/parse-config');
 const RetryManager = require('./lib/retry-manager');
 
-module.exports = (hermione, opts) => {
-    if (hermione.isWorker()) {
+module.exports = (testplane, opts) => {
+    if (testplane.isWorker()) {
         return;
     }
 
@@ -16,12 +16,12 @@ module.exports = (hermione, opts) => {
 
     const retryManager = new RetryManager(config);
 
-    hermione.on(hermione.events.RUNNER_START, () => {
+    testplane.on(testplane.events.RUNNER_START, () => {
         retryManager.clear();
     });
 
-    hermione.config.getBrowserIds().forEach((browserId) => {
-        const browserConfig = hermione.config.forBrowser(browserId);
+    testplane.config.getBrowserIds().forEach((browserId) => {
+        const browserConfig = testplane.config.forBrowser(browserId);
 
         const oldShouldRetry = browserConfig.shouldRetry;
 
